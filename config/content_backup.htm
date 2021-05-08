@@ -88,13 +88,58 @@
 <h3>10</h3>
 <p>1.<strong>stage3主題:無障礙越野車</strong></p>
 <p>2.動機:想要一台可以克服各種障礙地形的車子</p>
-<p>3.繪圖者:40823220</p><h3>10~11 task2</h3>
+<p>3.繪圖者:40823220</p>
+<p></p><h3>10~11 task2</h3>
 <p>1.利用api來控制我們stage1的產品，但是因為我們之前沒有成功模擬出來，所以也沒有達到完全控制</p>
 <p>2.stage2的產品還在測試中</p>
 <p>3.錄製影片，放在每周影片區，順便秀一下stage3的產品</p>
 <p><img alt="" height="325" src="/images/API.png" width="600"/></p>
-<p></p>
-<h1>筆記</h1>
+<p>程式:</p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false"># File created by Thibaut Royer, Epitech school
+# thibaut1.royer@epitech.eu
+# It intends to be an example program for the "Two wheels, one arm" educative project.
+
+import sim as vrep
+import math
+import random
+import time
+#import keyboard
+
+
+print ('Start')
+
+# Close eventual old connections
+vrep.simxFinish(-1)
+# Connect to V-REP remote server
+clientID = vrep.simxStart('127.0.0.1', 19997, True, True, 5000, 5)
+
+if clientID != -1:
+    print ('Connected to remote API server')
+    
+    res = vrep.simxAddStatusbarMessage(
+        clientID, "40823220",
+        vrep.simx_opmode_oneshot)
+    if res not in (vrep.simx_return_ok, vrep.simx_return_novalue_flag):
+        print("Could not add a message to the status bar.")
+
+    
+    opmode = vrep.simx_opmode_oneshot_wait
+    
+
+    
+    vrep.simxStartSimulation(clientID, opmode)
+    ret,front_handle=vrep.simxGetObjectHandle(clientID,"joint0",opmode)
+    ret,left_handle=vrep.simxGetObjectHandle(clientID,"joint",opmode)
+    ret,right_handle=vrep.simxGetObjectHandle(clientID,"joint2",opmode)
+    vrep.simxSetJointTargetVelocity(clientID,left_handle,10,opmode)
+    #vrep.simxGetObjectHandle(clientID, "main", opmode)
+
+        
+        
+else:
+    print ('Failed connecting to remote API server')
+    print ('End')</pre>
+<p></p><h1>筆記</h1>
 <h2>SSH</h2>
 <p>目前已成功啟用ssh</p>
 <p><img alt='height="199"' src="/images/SSH1.png" width="441"/></p>
