@@ -134,7 +134,8 @@ img.add_border {
           
         </header>
     <div id="tipue_search_content">10-task1 << <a href='10-task1.html'>Previous</a> <a href='12.html'>Next</a> >> 12<br /><h1>10~11 task2</h1>
-<p>(更新)後來有成功做出來，成果影片在w14</p>
+<p>(更新)升降梯後來有成功做出來，成果影片在w14</p>
+<p>(更新)搬運機有成功做出來，成果影片在w15</p>
 <p>1.利用api來控制我們stage1的產品，但是因為我們之前沒有成功模擬出來，所以也沒有達到完全控制</p>
 <p>2.stage2的產品還在測試中</p>
 <p>3.錄製影片，放在每周影片區，順便秀一下stage3的產品</p>
@@ -183,7 +184,85 @@ if clientID != -1:
         
 else:
     print ('Failed connecting to remote API server')
-    print ('End')</pre><br />10-task1 << <a href='10-task1.html'>Previous</a> <a href='12.html'>Next</a> >> 12</div>
+    print ('End')</pre>
+<p>搬運機程式:</p>
+<p><img alt="" height="198" src="./../images/2121-2.bmp" width="400"/></p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import sim as vrep
+import math
+import random
+import time
+import keyboard
+  
+print ('Start')
+  
+# Close eventual old connections
+vrep.simxFinish(-1)
+# Connect to V-REP remote server
+clientID = vrep.simxStart('192.168.50.217', 19997, True, True, 5000, 5)
+   
+if clientID !=-1:
+    print ('Connected to remote API server')
+    
+    res = vrep.simxAddStatusbarMessage(
+        clientID, "40823204",
+        vrep.simx_opmode_oneshot)
+           
+    if res not in (vrep.simx_return_ok, vrep.simx_return_novalue_flag):
+        print("Could not add a message to the status bar.")
+           
+    opmode = vrep.simx_opmode_oneshot_wait
+    STREAMING = vrep.simx_opmode_streaming
+      
+    vrep.simxStartSimulation(clientID, opmode)
+     
+     
+    ret,fwheel_handle=vrep.simxGetObjectHandle(clientID,"joint0",opmode)
+    ret,bwheel_handle=vrep.simxGetObjectHandle(clientID,"joint2",opmode)
+    ret,pole1_handle=vrep.simxGetObjectHandle(clientID,"joint3",opmode)
+    ret,pole2_handle=vrep.simxGetObjectHandle(clientID,"joint4",opmode)
+    ds=0
+    dy=0
+    df=0
+    db=0
+    vrep.simxSetJointTargetPosition(clientID,fwheel_handle,df,opmode)
+    vrep.simxSetJointTargetPosition(clientID,bwheel_handle,db,opmode)
+    vrep.simxSetJointTargetPosition(clientID,pole1_handle,ds,opmode)
+    vrep.simxSetJointTargetPosition(clientID,pole2_handle,dy,opmode)
+     
+     
+    while True:
+        #Clockwise
+        if keyboard.is_pressed("2"):
+            ds=ds-0.01
+            dy=dy-0.01
+            vrep.simxSetJointTargetPosition(clientID,pole1_handle,ds,opmode)
+            vrep.simxSetJointTargetPosition(clientID,pole2_handle,dy,opmode)
+            print("up")
+        if keyboard.is_pressed("4"):
+            ds=ds+0.01
+            dy=dy+0.01
+            vrep.simxSetJointTargetPosition(clientID,pole1_handle,ds,opmode)
+            vrep.simxSetJointTargetPosition(clientID,pole2_handle,dy,opmode)
+            print("down")
+        if keyboard.is_pressed("6"):
+            df=df+0.2
+            db=db+0.2
+            vrep.simxSetJointTargetPosition(clientID,fwheel_handle,df,opmode)
+            vrep.simxSetJointTargetPosition(clientID,bwheel_handle,db,opmode)
+            print("left")
+        if keyboard.is_pressed("8"):
+            df=df-0.2
+            db=db-0.2
+            vrep.simxSetJointTargetPosition(clientID,fwheel_handle,df,opmode)
+            vrep.simxSetJointTargetPosition(clientID,bwheel_handle,db,opmode)
+            print("right")
+ 
+ 
+              
+else:
+    print ('Failed connecting to  remote API server')
+    print ('End')</pre>
+<p></p><br />10-task1 << <a href='10-task1.html'>Previous</a> <a href='12.html'>Next</a> >> 12</div>
         
     <!-- footer -->
       <div class="container">
