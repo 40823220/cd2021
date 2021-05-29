@@ -342,6 +342,14 @@ else:
 <p>接下來就會讓產品來攀爬各種地形</p>
 <p><img alt="" height="317" src="/images/888.png" width="600"/></p>
 <h3>14~15 機械手臂控制</h3>
+<p>步驟:</p>
+<p><span>1.先到ipv4，開啟robodk，再開啟robodk.exe</span></p>
+<p><span>2.在robodk按左上角(打開)開啟範例pick_and_place_with_python.rdk</span></p>
+<p><span>3.將pick_and_place.py丟到小白窗，並找到第78行</span></p>
+<p><span>4.將RDK = Robolink(robodk_path="改成你資料夾內到<span>RoboDK.exe的位址</span><span>"</span></span></p>
+<p><span>5.</span>在roboDK裡選工具&gt;選項&gt;其他&gt;點選api服務器ip，將此行ip複製到RDK = Robolink(robodk_path="<span>改成你資料夾內到</span><span>RoboDK.exe的位址</span>", robodk_ip)，之後按go</p>
+<p>6.<span>再來換改</span><span>roboDK裡選工具&gt;選項&gt;python，</span><span>將你電腦白窗裡跑出的用灰色框起來的那串藍色的字，放到python編輯器裡，將python解釋器改成python.exe</span></p>
+<p>7.去小白窗按GO，到軟體裡按編輯成是路徑。</p>
 <p>參考組員28號的程式:</p>
 <pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false"># KMOLab Portable RoboDK pick and place
 from robolink import *    # API to communicate with robodk
@@ -605,7 +613,8 @@ robot.MoveJ([0,0,0,0,10,-200])
 <h2>w15</h2>
 <p>task2搬運機Python模擬</p>
 <p><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/H0m3scUj7iM" title="YouTube video player" width="560"></iframe></p>
-<h1>w5</h1>
+<p>參考組員28號機械手臂操作:</p>
+<p><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/wYOaF-Ip7G8" title="YouTube video player" width="560"></iframe></p><h1>w5</h1>
 <p>上台報告影片(另外放，故沒在影片區)<br/><br/><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/7pR3s6MWCEE" title="YouTube video player" width="560"></iframe></p>
 <table border="0" cellpadding="0" cellspacing="0" style="border-collapse: collapse; width: 240pt;" width="320">
 <tbody>
