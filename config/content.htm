@@ -860,11 +860,69 @@ robot.MoveJ([0,0,0,0,10,-200])
 <p><a href="/downloads/新STL.rar">W16零件STL檔</a>(想要STL檔點這裡)</p>
 <p><strong>項目2.建立 CoppeliaSim 4.1.0 MTB robot 場景</strong></p>
 <p><strong>影片:</strong></p>
+<p><strong><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/21t2F4VwXSk" title="YouTube video player" width="560"></iframe></strong></p>
 <p><strong>Google Drive:<a href="https://drive.google.com/file/d/1hOyW2hnaOAVdDc2sfgf1IRlIqtG_Bwtu/view?usp=sharing">所有項目的檔案</a></strong></p>
 <p>外面放的是我軟體的模擬檔案</p>
 <p>要程式的話點選這個資料夾(我的程式都在這裡)</p>
 <p><strong><img alt="" height="227" src="/images/232475.png" width="400"/></strong></p>
 <p><strong>Leo檔:<a href="/downloads/keyboard.rar">可用鍵盤控制程式</a></strong></p>
+<p><strong>可用鍵盤控制的程式說明:</strong></p>
+<p><strong>方向鍵左:軸1左轉、方向鍵右:軸1右轉</strong></p>
+<p><b>方向鍵上:軸2左轉、方向鍵下:軸2右轉</b></p>
+<p><b>S:吸盤向下、W:吸盤向上並吸取、空白鍵:放下</b></p>
+<pre class="brush:lua;auto-links:false;toolbar:false" contenteditable="false">function sysCall_init()
+    joint1=sim.getObjectHandle('joint1')
+    joint2=sim.getObjectHandle('joint2')
+    jointz=sim.getObjectHandle('jointz')
+    joint3=sim.getObjectHandle('joint3')
+    sim.setJointTargetPosition(joint1,0)
+    sim.setJointTargetPosition(joint2,0)
+    sim.setJointTargetPosition(joint3,0)
+    sim.setJointTargetPosition(jointz,0)
+    deg1=0
+    deg2=0
+    deg3=0
+end
+
+function sysCall_actuation()
+    message,auxiliaryData=sim.getSimulatorMessage()
+    while message~=-1 do
+        if (message==sim.message_keypress) then
+            if (auxiliaryData[1]==2009) then
+            deg1=deg1+1
+            deg3=deg2-deg1
+            sim.setJointTargetPosition(joint1,deg1*math.pi/180)
+            end
+            if (auxiliaryData[1]==2010) then
+            deg1=deg1-1
+            deg3=deg2-deg1
+            sim.setJointTargetPosition(joint1,deg1*math.pi/180)
+            end
+            if (auxiliaryData[1]==2007) then
+            deg2=deg2+1
+            deg3=deg1-deg2
+            sim.setJointTargetPosition(joint2,deg2*math.pi/180)
+            end
+            if (auxiliaryData[1]==2008) then
+            deg2=deg2-1
+            deg3=deg1-deg2
+            sim.setJointTargetPosition(joint2,deg2*math.pi/180)
+            end
+            if (auxiliaryData[1]==115) then
+                sim.setJointTargetPosition(jointz,-0.085)
+                sim.setIntegerSignal("pad_switch",1)
+            end
+            if (auxiliaryData[1]==119) then
+                sim.setJointTargetPosition(jointz,0)
+            end
+            if (auxiliaryData[1]==32) then
+                sim.setIntegerSignal("pad_switch",0)
+            end
+            sim.setJointTargetPosition(joint3,deg3*math.pi/180)
+        end
+    message,auxiliaryData=sim.getSimulatorMessage()
+    end
+end</pre>
 <p style="top: 837.6px;">(參考老師提供的程式)藉由鍵盤按鍵來控制Robot角度</p>
 <pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">if (auxiliaryData[1]==114) then --r right turn in degree
                     -- if key r pressed axis1 angle adds 5 degrees
