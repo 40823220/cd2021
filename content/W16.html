@@ -136,12 +136,186 @@ img.add_border {
     <div id="tipue_search_content">W15 << <a href='W15.html'>Previous</a> <br /><h1>W16</h1>
 <p><strong>項目1.在Onshape軟體上繪製機械手臂:</strong></p>
 <p><img alt="" height="209" src="./../images/N2.png" width="400"/></p>
-<p><strong>這段影片是我教大家如何使用Onshape這套繪圖軟體，並順便演示我畫的機械手臂</strong></p>
+<p><strong>影片:</strong></p>
+<p><strong>(是我教大家如何使用Onshape這套繪圖軟體，並順便演示我畫的機械手臂)</strong></p>
 <p><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/VhcRcxLM0Io" title="YouTube video player" width="560"></iframe></p>
 <p><strong>圖檔網址:</strong></p>
 <p>https://cad.onshape.com/documents/245854d934f3e53ddc55e45e/w/7429ac055850385f384a6a34/e/2498383dcd6ff0730daebedd</p>
 <p>這是我的<a href="https://cad.onshape.com/documents/245854d934f3e53ddc55e45e/w/7429ac055850385f384a6a34/e/2498383dcd6ff0730daebedd">零組件下載點</a>(40823220繪製)</p>
-<p><a href="./../downloads/W16取分項目機械手臂.rar">W16取分項目機械手臂STL檔</a> (想要STL檔點這裡)</p><br />W15 << <a href='W15.html'>Previous</a> </div>
+<p><a href="./../downloads/新STL.rar">W16零件STL檔</a>(想要STL檔點這裡)</p>
+<p><strong>項目2.建立 CoppeliaSim 4.1.0 MTB robot 場景</strong></p>
+<p><strong>影片:</strong></p>
+<p><strong>Google Drive:</strong></p>
+<p><strong>Leo2檔:</strong></p>
+<p style="top: 837.6px;">(參考老師提供的程式)藉由鍵盤按鍵來控制Robot角度</p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">if (auxiliaryData[1]==114) then --r right turn in degree
+                    -- if key r pressed axis1 angle adds 5 degrees
+                     rotation1 = rotation1 + 5*deg
+                     sim.setJointPosition(axis1, rotation1)
+                end -- if r
+                if (auxiliaryData[1]==108) then --l left turn in degree
+                    -- if key l pressed axis1 angle substract 5 degrees
+                     rotation1 = rotation1 - 5*deg
+                     sim.setJointPosition(axis1, rotation1)
+                end -- if l
+                if (auxiliaryData[1]==100) then --d suction pad down
+                    -- if key d pressed axis3 will down 0.01 m plus calibration
+                     distance3 = distance3 + 0.01 + calibration
+                     sim.setJointPosition(axis3, distance3)
+                end -- if d
+                if (auxiliaryData[1]==117) then --u suction pad up
+                    -- if key u pressed axis3 will up 0.01 m minus calibration
+                    -- 吸盤往下升 1 公分加上校正值
+                     distance3 = distance3 - 0.01 - calibration
+                     sim.setJointPosition(axis3, distance3)
+                end -- if u</pre>
+<p><strong>項目3.手臂末端加入 components-gripper-suction pad 吸盤</strong></p>
+<p><b>影片:</b></p>
+<p><b>裡面的驅動程式:</b></p>
+<p><b>1.因為我的機子比較大所以我的吸盤軸下降高度，我改為-0.085m</b></p>
+<p><b>2.為了讓他跑迴圈我在中間加了whle sim......</b></p>
+<pre class="brush:lua;auto-links:false;toolbar:false" contenteditable="false">function moving(x,y)
+    a=0.4
+    b=0.4
+    c=math.pow((math.pow(x,2)+math.pow(y,2)),0.5)
+    s=(a+b+c)/2
+    area=math.pow((s*(s-a)*(s-b)*(s-c)),0.5)
+    h=area/(2*c)
+    deg1_base=math.atan(x/y)
+    if x&lt;0 and y&lt;0 then
+        deg1_base=deg1_base+math.pi
+    end
+    deg1_tri=math.asin(h/a)
+    deg1=deg1_base+deg1_tri
+    deg2=math.pi-(0.5*math.pi-deg1_tri)-math.acos(h/b)
+    deg3=deg2-deg1
+    print(deg1)
+    sim.setJointTargetPosition(joint01,deg1)
+    sim.setJointTargetPosition(joint02,-deg2)
+    sim.setJointTargetPosition(joint03,deg3)
+end
+
+function sysCall_threadmain()
+    joint01=sim.getObjectHandle('joint1')
+    joint02=sim.getObjectHandle('joint2')
+    joint03=sim.getObjectHandle('joint3')
+    jointz=sim.getObjectHandle('jointz')
+    sim.setJointTargetPosition(joint01,0)
+    sim.setJointTargetPosition(joint02,0)
+    sim.setJointTargetPosition(joint03,0)
+    sim.setJointTargetPosition(jointz,0)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.setJointTargetPosition(jointz,-0.085)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    while sim.getSimulationState()~=sim.simulation_advancing_abouttostopre do
+    moving(0.2,0.7)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.setJointTargetPosition(jointz,-0.085)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    moving(-0.3,-0.55)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.setJointTargetPosition(jointz,-0.085)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    end
+end</pre>
+<p>這是吸盤的程式，感謝40823214熱心的指導，讓我能理解並使用他</p>
+<pre class="brush:lua;auto-links:false;toolbar:false" contenteditable="false">    maxPullForce=sim.getScriptSimulationParameter(sim.handle_self,'maxPullForce')
+    maxShearForce=sim.getScriptSimulationParameter(sim.handle_self,'maxShearForce')
+    maxPeelTorque=sim.getScriptSimulationParameter(sim.handle_self,'maxPeelTorque')
+
+    sim.setLinkDummy(l,-1)
+    sim.setObjectParent(l,b,true)
+    m=sim.getObjectMatrix(l2,-1)
+    sim.setObjectMatrix(l,-1,m)
+end
+
+function sysCall_cleanup() 
+    --this is teach by 40823214
+    sim.setLinkDummy(l,-1)
+    sim.setObjectParent(l,b,true)
+    m=sim.getObjectMatrix(l2,-1)
+    sim.setObjectMatrix(l,-1,m)
+end 
+
+function sysCall_sensing() 
+    parent=sim.getObjectParent(l)
+    --this is teach by 40823214
+    local sig=sim.getIntegerSignal("pad_switch")
+    if (not sig) or (sig==0) then
+        if (parent~=b) then
+            sim.setLinkDummy(l,-1)
+            sim.setObjectParent(l,b,true)
+            m=sim.getObjectMatrix(l2,-1)
+            sim.setObjectMatrix(l,-1,m)
+        end
+    else
+        if (parent==b) then
+            index=0
+            while true do
+                shape=sim.getObjects(index,sim.object_shape_type)
+                if (shape==-1) then
+                    break
+                end
+                local res,val=sim.getObjectInt32Parameter(shape,sim.shapeintparam_respondable)
+                if (shape~=b) and (val~=0) and (sim.checkProximitySensor(s,shape)==1) then
+                    -- Ok, we found a respondable shape that was detected
+                    -- We connect to that shape:
+                    -- Make sure the two dummies are initially coincident:
+                    sim.setObjectParent(l,b,true)
+                    m=sim.getObjectMatrix(l2,-1)
+                    sim.setObjectMatrix(l,-1,m)
+                    -- Do the connection:
+                    sim.setObjectParent(l,shape,true)
+                    sim.setLinkDummy(l,l2)
+                    break
+                end
+                index=index+1
+            end
+        else
+            -- Here we have an object attached
+            if (infiniteStrength==false) then
+                -- We might have to conditionally beak it apart!
+                result,force,torque=sim.readForceSensor(suctionPadLink) -- Here we read the median value out of 5 values (check the force sensor prop. dialog)
+                if (result&gt;0) then
+                    breakIt=false
+                    if (force[3]&gt;maxPullForce) then breakIt=true end
+                    sf=math.sqrt(force[1]*force[1]+force[2]*force[2])
+                    if (sf&gt;maxShearForce) then breakIt=true end
+                    if (torque[1]&gt;maxPeelTorque) then breakIt=true end
+                    if (torque[2]&gt;maxPeelTorque) then breakIt=true end
+                    if (breakIt) then
+                        -- We break the link:
+                        sim.setLinkDummy(l,-1)
+                        sim.setObjectParent(l,b,true)
+                        m=sim.getObjectMatrix(l2,-1)
+                        sim.setObjectMatrix(l,-1,m)
+                    end
+                end
+            end
+        end
+    end
+end 
+</pre>
+<p></p>
+<p></p>
+<h4></h4>
+<p><br/><br/></p>
+<p></p>
+<p><br/><br/></p>
+<p></p>
+<p></p>
+<p></p><br />W15 << <a href='W15.html'>Previous</a> </div>
         
     <!-- footer -->
       <div class="container">
