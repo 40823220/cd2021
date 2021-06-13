@@ -862,7 +862,7 @@ robot.MoveJ([0,0,0,0,10,-200])
 <p><strong>項目2.建立 CoppeliaSim 4.1.0 MTB robot 場景</strong></p>
 <p><strong>影片:</strong></p>
 <p><strong>Google Drive:</strong></p>
-<p><strong>Leo2檔:</strong></p>
+<p><strong>Leo檔:</strong></p>
 <p style="top: 837.6px;">(參考老師提供的程式)藉由鍵盤按鍵來控制Robot角度</p>
 <pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">if (auxiliaryData[1]==114) then --r right turn in degree
                     -- if key r pressed axis1 angle adds 5 degrees
@@ -887,9 +887,10 @@ robot.MoveJ([0,0,0,0,10,-200])
                 end -- if u</pre>
 <p><strong>項目3.手臂末端加入 components-gripper-suction pad 吸盤</strong></p>
 <p><b>影片:</b></p>
+<p><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/r7MeTmwDQXY" title="YouTube video player" width="560"></iframe></p>
 <p><b>裡面的驅動程式:</b></p>
-<p><b>1.因為我的機子比較大所以我的吸盤軸下降高度，我改為-0.085m</b></p>
-<p><b>2.為了讓他跑迴圈我在中間加了whle sim......</b></p>
+<p>1.因為我的機子比較大所以我的吸盤軸下降高度，我改為-0.085m</p>
+<p>2.為了讓他跑迴圈我在中間加了while sim......</p>
 <pre class="brush:lua;auto-links:false;toolbar:false" contenteditable="false">function moving(x,y)
     a=0.4
     b=0.4
@@ -1023,9 +1024,58 @@ function sysCall_sensing()
     end
 end 
 </pre>
-<p><br/><br/></p>
-<p></p>
-<p><br/><br/></p>
-<p></p>
-<p></p>
-<p></p>
+<p><strong>項目4.逆向運算學函式</strong></p>
+<p><strong>影片:</strong></p>
+<p><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/QXL1fT3ILXU" title="YouTube video player" width="560"></iframe></p>
+<p><strong>主要程式說明:</strong></p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">joint01=sim.getObjectHandle('joint1')設定軸1
+    joint02=sim.getObjectHandle('joint2')設定軸2
+    joint03=sim.getObjectHandle('joint3')設定軸3
+    jointz=sim.getObjectHandle('jointz')設定方軸
+    sim.setJointTargetPosition(joint01,0)定位軸1
+    sim.setJointTargetPosition(joint02,0)定位軸2
+    sim.setJointTargetPosition(joint03,0)定位軸3
+    sim.setJointTargetPosition(jointz,0)定位方軸
+    sim.setIntegerSignal("pad_switch",1)
+    sim.setJointTargetPosition(jointz,-0.085)    吸盤下降0.085
+    sim.wait(2)停頓2秒
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    moving(0.2,0.7)以下都是各點要求       
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,-0.06)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)
+    moving(-0.3,-0.55)                                       
+    sim.wait(5)
+    sim.setIntegerSignal("pad_switch",0)
+    sim.wait(2)
+    sim.setIntegerSignal("pad_switch",1)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,-0.06)
+    sim.wait(2)
+    sim.setJointTargetPosition(jointz,0)
+    sim.wait(2)</pre>
+<p><strong>其他程式說明:(</strong>試算角度)</p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">a=0.4 調整a.距離為0.4
+b=0.4 調整b.距離為0.4
+c=math.pow((math.pow(x,2)+math.pow(y,2)),0.5) 角度計算
+s=(a+b+c)/2
+area=math.pow((s*(s-a)*(s-b)*(s-c)),0.5)
+h=area/(2*c)
+deg1_base=math.atan(x/y)
+if x&lt;0 and y&lt;0 then
+    deg1_base=deg1_base+math.pi
+end
+deg1_tri=math.asin(h/a)
+deg1=deg1_base+deg1_tri
+deg2=math.pi-(0.5*math.pi-deg1_tri)-math.acos(h/b)
+deg3=deg2-deg1
+sim.setJointTargetPosition(joint01,deg1)
+sim.setJointTargetPosition(joint02,-deg2)
+sim.setJointTargetPosition(joint03,deg3)</pre>
