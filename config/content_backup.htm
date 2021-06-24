@@ -561,7 +561,8 @@ robot.MoveJ([0,0,0,0,10,-200])
 <h2>task1亂數分組 操作步驟</h2>
 <p><img alt="" height="404" src="/images/亂數分組.png" width="600"/></p>
 <h2>GOGS倉儲clone及推送方式</h2>
-<p><img alt="" height="450" src="/images/G.jpg" width="600"/></p><h1>每週影片區</h1>
+<p><img alt="" height="450" src="/images/G.jpg" width="600"/></p>
+<h1>每週影片區</h1>
 <h2>w1</h2>
 <p><strong>內有與組員的對話內容</strong></p>
 <p><iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="allowfullscreen" frameborder="0" height="315" src="https://www.youtube.com/embed/tlEVOEnIgLM" width="560"></iframe></p>
@@ -949,18 +950,19 @@ end</pre>
 <p><b>裡面的驅動程式:</b></p>
 <p>1.因為我的機子比較大所以我的吸盤軸下降高度，我改為-0.085m</p>
 <p>2.為了讓他跑迴圈我在中間加了while sim......</p>
+<p>3.其他說明，我附在程式裡</p>
 <pre class="brush:lua;auto-links:false;toolbar:false" contenteditable="false">function moving(x,y)
-    a=0.4
-    b=0.4
-    c=math.pow((math.pow(x,2)+math.pow(y,2)),0.5)
-    s=(a+b+c)/2
+    a=0.4 我的第一個手臂-A距離長
+    b=0.4 我的第二個手臂-B距離長
+    c=math.pow((math.pow(x,2)+math.pow(y,2)),0.5) 算面積
+    s=(a+b+c)/2 用海龍公式求解
     area=math.pow((s*(s-a)*(s-b)*(s-c)),0.5)
     h=area/(2*c)
     deg1_base=math.atan(x/y)
     if x&lt;0 and y&lt;0 then
-        deg1_base=deg1_base+math.pi
+        deg1_base=deg1_base+math.pi 算出來的角度會等於自身角度家徑度
     end
-    deg1_tri=math.asin(h/a)
+    deg1_tri=math.asin(h/a) 
     deg1=deg1_base+deg1_tri
     deg2=math.pi-(0.5*math.pi-deg1_tri)-math.acos(h/b)
     deg3=deg2-deg1
@@ -980,16 +982,16 @@ function sysCall_threadmain()
     sim.setJointTargetPosition(joint03,0)
     sim.setJointTargetPosition(jointz,0)
     sim.setIntegerSignal("pad_switch",1)
-    sim.setJointTargetPosition(jointz,-0.085)
-    sim.wait(2)
-    sim.setJointTargetPosition(jointz,0)
+    sim.setJointTargetPosition(jointz,-0.085) 這裡是吸取東西的指令開始點
+    sim.wait(2) 等兩秒
+    sim.setJointTargetPosition(jointz,0) 吸取東西的指令終止點
     while sim.getSimulationState()~=sim.simulation_advancing_abouttostopre do
-    moving(0.2,0.7)
+    moving(0.2,0.7) 到這個指定的座標
+    sim.wait(2) 
+    sim.setIntegerSignal("pad_switch",0)吸盤關掉 (把方塊往下丟)
     sim.wait(2)
-    sim.setIntegerSignal("pad_switch",0)
-    sim.wait(2)
-    sim.setIntegerSignal("pad_switch",1)
-    sim.setJointTargetPosition(jointz,-0.085)
+    sim.setIntegerSignal("pad_switch",1) 吸盤打開
+    sim.setJointTargetPosition(jointz,-0.085) 再一次向下-0.085吸取東西
     sim.wait(2)
     sim.setJointTargetPosition(jointz,0)
     sim.wait(2)
@@ -1205,17 +1207,18 @@ if clientID != -1:
         vrep.simxSetIntegerSignal(clientID,"pad_switch",0,opmode)
         time.sleep(1)
         vrep.simxSetIntegerSignal(clientID,"pad_switch",1,opmode)
-        vrep.simxSetJointTargetPosition(clientID,jointz,-0.085,opmode)
+        vrep.simxSetJointTargetPosition(clientID,jointz,-0.085,opmode)吸起來
         time.sleep(1)
-        vrep.simxSetJointTargetPosition(clientID,jointz,0,opmode)
+        vrep.simxSetJointTargetPosition(clientID,jointz,0,opmode)放下
         moving(-0.3,-0.55)
         time.sleep(1)
         vrep.simxSetIntegerSignal(clientID,"pad_switch",0,opmode)
         time.sleep(1)
         vrep.simxSetIntegerSignal(clientID,"pad_switch",1,opmode)
-        vrep.simxSetJointTargetPosition(clientID,jointz,-0.085,opmode)
+        vrep.simxSetJointTargetPosition(clientID,jointz,-0.085,opmode)吸起來
         time.sleep(1)
         vrep.simxSetJointTargetPosition(clientID,jointz,0,opmode)</pre>
+<p>放下</p>
 <p><b>心得:</b></p>
 <p>我只想說對於我這個初學者而言，要在短時間內，弄熟Onshape、Coppeliasim這兩套軟體，難度有點高，重點是還要搭配程式，這真的是個艱難的挑戰，雖然我沒有做得很完整，但至少有個樣子了，我能做到這樣，最大功臣是40823214同學的協助，我一直問，他就一直教，真的很棒。總之，期末這項作業，我學到了很多，我也真的是盡力了。</p>
 <p><strong>參與40823214的30人協同的教學影片:</strong></p>
@@ -1228,5 +1231,6 @@ if clientID != -1:
 <p><strong><a href="/downloads/鍵盤控制.rar">項目2-lua程式可用鍵盤控制</a></strong></p>
 <p><strong><a href="/downloads/軟體內部的程式運作.rar">項目4-lua程式在軟體內運作</a></strong></p>
 <p><strong><a href="/downloads/Python remote API 驅動.rar">項目5-用Python remote API 驅動</a> 、 <a href="/downloads/robot.rar">搭配的PY程式</a></strong></p>
-<p><strong></strong></p>
+<h1>W18</h1>
+<p></p>
 <p><strong></strong></p>
